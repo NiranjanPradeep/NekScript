@@ -35,7 +35,7 @@ int CVirtualMachine::ExecuteScript(const std::string &script)
 	error = semanticAnalyser.Analyze(tokenList, *pGrammarTable, semanticTokenList);
 	if (error != -1)
 	{ 
-		std::cout << "\nError: Semantic error, i = " << error << ", " << tokenList[error].Content;
+		std::cout << "\nError: Semantic error, i = " << error << ", " << std::string((error>=tokenList.size()) ? "unexpected end of file" : tokenList[error].Content);
 		return error;
 	}
 	else

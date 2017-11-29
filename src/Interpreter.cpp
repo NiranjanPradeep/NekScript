@@ -11,7 +11,7 @@ int CInterpreter::Execute(std::string ByteCode, CGrammarTable & gl)
 	ss.str(ByteCode);
 	while (std::getline(ss, current, '#'))
 	{
-		std::cout << "\nCurrent word = " << current;
+		//std::cout << "\nCurrent word = " << current;
 		auto &func = gl.Get(current);
 
 		stackFrameOffset = stackFrame.size()-func.expected_type.size();
@@ -31,6 +31,6 @@ int CInterpreter::Execute(std::string ByteCode, CGrammarTable & gl)
 	for (auto &t : stackFrame)
 		t.Deleter(t.Data);
 	stackFrame.clear();
-	std::cout << "\nStack frame is : "; for (auto &t : stackFrame) std::cout << *(std::string *)t.Data << " ";
+	// std::cout << "\nStack frame is : "; for (auto &t : stackFrame) std::cout << *(std::string *)t.Data << " ";
 	return -1;
 }

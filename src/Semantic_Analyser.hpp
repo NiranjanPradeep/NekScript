@@ -40,9 +40,10 @@ public:
 private:
 	int ProcessToken(TokenList_t &tl, CGrammarTable &gl, SemanticToken &st, int &i)
 	{
-		//std::cout << "\n\ni = " << i;
-		//std::cout << "\ntoken = " << tl[i].Content;
 		int error = -1;
+		if (i >= tl.size()) return i;
+		std::cout << "\n\ni = " << i;
+		std::cout << "\ntoken = " << tl[i].Content;
 		if (tl[i].Type == "identifier")  // could be function or variable
 		{
 			error = ProcessIdentifier(tl, gl, st, i);
@@ -100,13 +101,13 @@ private:
 		st.Type = "function";
 
 		i++;
-		if (tl[i].Type != "syntaxer") return i;
+		if (tl[i].Type != "syntaxer") { std::cout << "\nExpected snytaxer"; i; }
 
 		i++;
 		auto &argTypeList = gl.Get(functionToken.Content).expected_type;
 		for (auto &argType : argTypeList)
 		{
-			//std::cout << "\nNext arg = " << argType;
+			std::cout << "\nNext arg = " << argType;
 			SemanticToken argToken;
 			error = ProcessToken(tl, gl, argToken, i);
 			if (error != -1) { std::cout << "\nError in ProcessFunction() "; return error; }
@@ -120,7 +121,7 @@ private:
 				}
 				else
 				{
-					std::cout << "\nFunction expected argument " << argType << ", but got" << argToken.DataType;
+					std::cout << "\nFunction expected argument of type " << argType << ", but got " << argToken.DataType;
 					error = i;
 					return error;
 				}
@@ -128,7 +129,7 @@ private:
 			st.ChildList.push_back(argToken);
 		}
 
-		if (tl[i].Type != "syntaxer") return i;
+		if (tl[i].Type != "syntaxer") { std::cout << "\nExpected snytaxer"; i; }
 		i++;
 		//std::cout << "\nFunction done!!!!";
 		return error;
