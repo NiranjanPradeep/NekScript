@@ -4,6 +4,8 @@
 
 int CCompiler::CreateByteCode(SemanticTokenList_t & stl, CGrammarTable &gl, std::string & ByteCode)
 {
+	m_ss.str("");
+	m_ss.clear();
 	for (auto &t : stl)
 		PostFixConverter(t, gl);
 

@@ -25,33 +25,38 @@ int CVirtualMachine::ExecuteScript(const std::string &script)
 	}
 	else
 	{
+		std::cout << "\nSyntactically Correct!";
+		/*
 		for (auto &t : tokenList)
 		{
 			std::cout.put('\n');
 			t.Display();
 		}
+		*/
 	}
 
 	error = semanticAnalyser.Analyze(tokenList, *pGrammarTable, semanticTokenList);
 	if (error != -1)
 	{ 
-		std::cout << "\nError: Semantic error, i = " << error << ", " << std::string((error>=tokenList.size()) ? "unexpected end of file" : tokenList[error].Content);
+		std::cout << "\nError: Semantic error, i = " << error << std::string((error>=tokenList.size()) ? (". Got unexpected end of file") : (". Error at " + tokenList[error].Content));
 		return error;
 	}
 	else
 	{
-		std::cout << "\n\nSemantically Correct!\n";
+		std::cout << "\nSemantically Correct!\n";
+		/*
 		for (auto &t : semanticTokenList)
 		{
 			t.Display();
 			std::cout.put('\n');
 		}
+		*/
 	}
 
 	compiler.CreateByteCode(semanticTokenList, *pGrammarTable, byteCode);
 	std::cout << "\nByteCode : " << byteCode;
 
-	std::cout << "\nExecuting...";
+	//std::cout << "\nExecuting...";
 	
 	return interpreter.Execute(byteCode, *pGrammarTable);
 }

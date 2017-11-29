@@ -19,14 +19,14 @@ public:
 private:
 	static void PushNext()
 	{
-		std::cout << "\nPushNext()";
+		//std::cout << "\nPushNext()";
 		std::string temp;
 		std::getline(m_pCurrentInterpreter->ss, temp, '#');
 		m_pCurrentInterpreter->stackFrame.push_back({ new std::string(std::move(temp)), StringDeleter });
 	}
 	static void PushData(Variable_t v)
 	{
-		std::cout << "\nPushData()";
+		//std::cout << "\nPushData()";
 		m_pCurrentInterpreter->stackFrame.push_back(v);
 	}
 	static Variable_t & GetVariable(int i)
