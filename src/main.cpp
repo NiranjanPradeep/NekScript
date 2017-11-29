@@ -8,11 +8,10 @@ int main()
 	std::cout << "\nScript is:\n" << script;
 	
 	CGrammarTable grammarList;
-	grammarList.Add("Print",		Function_t{ "string", {"string", "string"}, &Print });
-	grammarList.Add("_GetString",	Function_t{ "string", {}, &_GetString });
-	grammarList.Add("_GetNumber",	Function_t{ "number", {}, &_GetNumber });
-	grammarList.Add(Function_t{ "string", {"number"}, &NumberToString });
-	grammarList.Get("numberTostring");
+	grammarList.Add("Print",			Function_t{ "string", {"string", "string"}, &Print });
+	grammarList.Add("_GetString",		Function_t{ "string", {}, &_GetString });
+	grammarList.Add("_GetNumber",		Function_t{ "number", {}, &_GetNumber });
+	grammarList.Add("NumberToString",	Function_t{ "string", {"number"}, &NumberToString }, true);
 
 	CVirtualMachine vm;
 	vm.AttachGrammar(&grammarList);

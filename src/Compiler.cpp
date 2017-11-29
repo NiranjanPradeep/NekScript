@@ -2,19 +2,19 @@
 
 #include "Compiler.hpp"
 
-int CCompiler::CreateByteCode(SemanticTokenList_t & stl, std::string & ByteCode)
+int CCompiler::CreateByteCode(SemanticTokenList_t & stl, CGrammarTable &gl, std::string & ByteCode)
 {
 	for (auto &t : stl)
-		Display_PostFix_SemanticTokenList_t(t);
+		PostFixConverter(t, gl);
 
 	ByteCode = m_ss.str();
 	return -1;
 }
 
-void CCompiler::Display_PostFix_SemanticTokenList_t(SemanticToken & st)
+void CCompiler::PostFixConverter(SemanticToken & st, CGrammarTable &gl)
 {
 	for (auto &t : st.ChildList)
-		Display_PostFix_SemanticTokenList_t(t);
+		PostFixConverter(t, gl);
 
 	if (st.Type == "string")
 		m_ss << "_GetString#" << st.Content << "#";
@@ -32,6 +32,6 @@ void CCompiler::Display_PostFix_SemanticTokenList_t(SemanticToken & st)
 	if (st.TypecastTo.empty() == false)
 	{
 		std::cout << "Implicit casting : " << st.DataType << " to " << st.TypecastTo << " made by compiler.";
-		m_ss << st.DataType << "To" << st.TypecastTo << "#";
+		m_ss << gl.IsCastable(st.DataType, st.TypecastTo) << "#";
 	}
 }

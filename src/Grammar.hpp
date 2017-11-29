@@ -42,12 +42,7 @@ public:
 	{
 		std::size_t operator () (const std::pair<std::string, std::string> &p) const
 		{
-			//// took this from http://en.cppreference.com/w/cpp/utility/hash
-			//auto h1 = std::hash<std::string>{}(p.first);
-			//auto h2 = std::hash<std::string>{}(p.second);
-
-			//return h1 ^ h2;
-			std::cout << "\nHashed : " << std::hash<std::string>{}(p.first + p.second);
+			//std::cout << "\nHashed : " << std::hash<std::string>{}(p.first + p.second);
 			return std::hash<std::string>{}(p.first + p.second);
 		}
 	};
@@ -56,40 +51,41 @@ public:
 		if (m_Table.find(s) == m_Table.end()) return false;
 		else return true;
 	}
-	bool IsCastable(const std::string &from, const std::string &to)
+	std::string IsCastable(const std::string &from, const std::string &to)
 	{
-		if (m_TableCaster.find({ from, to }) == m_TableCaster.end()) return false;
-		else return true;
+		if (m_TableCaster.find({ from, to }) == m_TableCaster.end()) return "";
+		else
+		{
+			//std::cout << "\nReturning function with name = " << m_TableCaster[{from, to}];
+			return m_TableCaster[{from, to}];
+		}
 	}
 
-	void Add(const std::string &Name, Function_t &&func)
+	void Add(const std::string &Name, Function_t &&func, bool TypeCaster = false)
 	{
+		//std::cout << "\nAdding function with Name = " << Name;
+		if (TypeCaster)
+		{
+			auto t = std::make_pair(func.expected_type[0], func.return_type);
+			m_TableCaster.insert(
+				std::make_pair(
+					t,
+					Name
+				)
+			);
+		}
 		m_Table.insert(std::make_pair(Name, std::move(func)));
 	}
 	
-	void Add(Function_t &&func)
-	{
-		auto t = std::make_pair(func.expected_type[0]+"To", func.return_type);
-		m_TableCaster.insert(
-			std::make_pair(
-				t,
-				func
-			)
-		);
-		this->Get(func.expected_type[0] + "To" + func.return_type);
-	}
-
 	const Function_t & Get(const std::string &s)
 	{
 		if(IsFunction(s)) return m_Table[s];
-
-			return m_TableCaster[std::make_pair(s, std::string{})];
 	}
 private:
 
 private:
 	using Table_t = std::unordered_map <std::string, Function_t >;
-	using TableCaster_t = std::unordered_map <std::pair<std::string, std::string >, Function_t, CastHash >;
+	using CastingPair_t = std::unordered_map <std::pair<std::string, std::string >, std::string, CastHash >;
 	Table_t			m_Table;
-	TableCaster_t	m_TableCaster;
+	CastingPair_t	m_TableCaster;
 };

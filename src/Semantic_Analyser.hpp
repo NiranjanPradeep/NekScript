@@ -113,7 +113,7 @@ private:
 			if (argType != argToken.DataType)
 			{
 				// check if it can be converted
-				if (gl.IsCastable(argToken.DataType, argType))
+				if (gl.IsCastable(argToken.DataType, argType) != "")
 				{
 					std::cout << "\nImplicit typecast from " << argToken.DataType << " to " << argType;
 					argToken.TypecastTo = argType;

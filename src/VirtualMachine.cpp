@@ -48,7 +48,7 @@ int CVirtualMachine::ExecuteScript(const std::string &script)
 		}
 	}
 
-	compiler.CreateByteCode(semanticTokenList, byteCode);
+	compiler.CreateByteCode(semanticTokenList, *pGrammarTable, byteCode);
 	std::cout << "\nByteCode : " << byteCode;
 
 	std::cout << "\nExecuting...";
