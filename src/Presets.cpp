@@ -21,7 +21,7 @@ void NumberDeleter		(void *& Data)
 // Library Functions
 void Print				(StackFrameController * pSfc)
 {
-	std::string str = pSfc->GetValue<std::string>(0) + pSfc->GetValue<std::string>(1);
+	std::string str = pSfc->GetValue<std::string>(0);
 	std::cout << "\nPrint() : " << str;
 	// pSfc->PushData({ new std::string(std::move(str)), StringDeleter});
 }
@@ -53,6 +53,11 @@ void Shreya(StackFrameController *pSfc)
 	pSfc->PushData({ new std::string(std::move(str)), StringDeleter });
 }
 
+void AddString(StackFrameController *pSfc)
+{
+	std::string sum = pSfc->GetValue<std::string>(0) + pSfc->GetValue<std::string>(1);
+	pSfc->PushData({ new std::string(std::move(sum)), StringDeleter });
+}
 
 void AddNumber			(StackFrameController *pSfc)
 {

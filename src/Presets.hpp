@@ -10,8 +10,9 @@ void NumberDeleter		(void *&Data);
 
 // Library Functions
 void Print				(StackFrameController *pSfc);
-void Shreya				(StackFrameController * pSfc);
+void Shreya				(StackFrameController *pSfc);
 void AddNumber			(StackFrameController *pSfc);
+void AddString			(StackFrameController *pSfc);
 
 // Implicit Functions
 void _GetString			(StackFrameController *pSfc);

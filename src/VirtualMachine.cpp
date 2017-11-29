@@ -7,7 +7,7 @@ CVirtualMachine::CVirtualMachine()
 
 void CVirtualMachine::AttachGrammar(CGrammarTable *ptr)
 {
-	pGrammarTable = ptr;
+	m_pGrammarTable = ptr;
 }
 
 int CVirtualMachine::ExecuteScript(const std::string &script)
@@ -16,8 +16,8 @@ int CVirtualMachine::ExecuteScript(const std::string &script)
 	SemanticTokenList_t semanticTokenList;
 	std::string byteCode;
 
-	tokenizer.Assign(&script);
-	int error = tokenizer.Tokenize(tokenList);
+	m_Tokenizer.Assign(&script);
+	int error = m_Tokenizer.Tokenize(tokenList);
 	if (error != -1)
 	{
 		std::cout << "\nError while parsing. i = " << error << ", " << std::string(script.begin() + error, script.end());
@@ -25,8 +25,8 @@ int CVirtualMachine::ExecuteScript(const std::string &script)
 	}
 	else
 	{
-		std::cout << "\nSyntactically Correct!";
 		/*
+		std::cout << "\nSyntactically Correct!";
 		for (auto &t : tokenList)
 		{
 			std::cout.put('\n');
@@ -35,28 +35,31 @@ int CVirtualMachine::ExecuteScript(const std::string &script)
 		*/
 	}
 
-	error = semanticAnalyser.Analyze(tokenList, *pGrammarTable, semanticTokenList);
+	error = m_SemanticAnalyser.Analyze(tokenList, *m_pGrammarTable, semanticTokenList);
 	if (error != -1)
 	{ 
-		std::cout << "\nError: Semantic error, i = " << error << std::string((error>=tokenList.size()) ? (". Got unexpected end of file") : (". Error at " + tokenList[error].Content));
+		std::cout << "\nError: Semantic error, i = " << error << std::string(
+				(error>=static_cast<int>(tokenList.size())) ? 
+				(". Got unexpected end of file") : 
+				(". Error at " + tokenList[error].Content)
+			);
 		return error;
 	}
 	else
 	{
-		std::cout << "\nSemantically Correct!\n";
 		/*
+		std::cout << "\nSemantically Correct!";
 		for (auto &t : semanticTokenList)
 		{
-			t.Display();
 			std::cout.put('\n');
+			t.Display();
 		}
 		*/
 	}
 
-	compiler.CreateByteCode(semanticTokenList, *pGrammarTable, byteCode);
-	std::cout << "\nByteCode : " << byteCode;
+	m_Compiler.CreateByteCode(semanticTokenList, *m_pGrammarTable, byteCode);
+	// std::cout << "\nByteCode : " << byteCode;
 
 	//std::cout << "\nExecuting...";
-	
-	return interpreter.Execute(byteCode, *pGrammarTable);
+	return m_Interpreter.Execute(byteCode, *m_pGrammarTable);
 }

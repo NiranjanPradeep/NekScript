@@ -33,7 +33,7 @@ void CCompiler::PostFixConverter(SemanticToken & st, CGrammarTable &gl)
 
 	if (st.TypecastTo.empty() == false)
 	{
-		std::cout << "Implicit casting : " << st.DataType << " to " << st.TypecastTo << " made by compiler.";
+		//std::cout << "\nImplicit casting : " << st.DataType << " to " << st.TypecastTo << " made by compiler.";
 		m_ss << gl.IsCastable(st.DataType, st.TypecastTo) << "#";
 	}
 }

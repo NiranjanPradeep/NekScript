@@ -10,38 +10,33 @@
 class CInterpreter
 {
 public:
-	CInterpreter() :
-		sfc{ PushNext, PushData, GetVariable }
+	CInterpreter() 
 	{
-		m_pCurrentInterpreter = this;
+		m_Sfc.PushNext		= [this]() {PushNext();};
+		m_Sfc.PushData		= [this](Variable_t t) {PushData(t); };
+		m_Sfc.GetVariable	= [this](int i)->Variable_t & {return GetVariable(i); };
 	}
 	int Execute(std::string ByteCode, CGrammarTable &gl);
 private:
-	static void PushNext()
+	void PushNext()
 	{
 		//std::cout << "\nPushNext()";
 		std::string temp;
-		std::getline(m_pCurrentInterpreter->ss, temp, '#');
-		m_pCurrentInterpreter->stackFrame.push_back({ new std::string(std::move(temp)), StringDeleter });
+		std::getline(m_ss, temp, '#');
+		m_StackFrame.push_back({ new std::string(std::move(temp)), StringDeleter });
 	}
-	static void PushData(Variable_t v)
+	void PushData(Variable_t v)
 	{
 		//std::cout << "\nPushData()";
-		m_pCurrentInterpreter->stackFrame.push_back(v);
+		m_StackFrame.push_back(v);
 	}
-	static Variable_t & GetVariable(int i)
+	Variable_t & GetVariable(int i)
 	{
-		return
-			//&*(m_pCurrentInterpreter->stackFrame.end()-m_pCurrentInterpreter->stackFrameOffset+i)
-			//&*(m_pCurrentInterpreter->stackFrame.end()-1)
-			(m_pCurrentInterpreter->stackFrame[m_pCurrentInterpreter->stackFrameOffset+i]);
-			//(*(m_pCurrentInterpreter->stackFrame.end() - m_pCurrentInterpreter->stackFrameOffset + i)).Data;
-		;
+		return (m_StackFrame[m_StackFrameOffset+i]);
 	}
 private:
-	std::stringstream ss;
-	StackFrameController sfc;
-	int stackFrameOffset;
-	std::vector<Variable_t> stackFrame;
-	static CInterpreter	*m_pCurrentInterpreter;
+	std::stringstream		m_ss;
+	StackFrameController	m_Sfc;
+	int						m_StackFrameOffset;
+	std::vector<Variable_t> m_StackFrame;
 };

@@ -13,9 +13,9 @@ public:
 	void AttachGrammar(CGrammarTable *ptr);
 	int ExecuteScript(const std::string &script);
 private:
-	CTokenizer tokenizer;
-	CSemanticAnalyser semanticAnalyser;
-	CCompiler compiler;
-	CInterpreter interpreter;
-	CGrammarTable *pGrammarTable;
+	CTokenizer			m_Tokenizer;
+	CSemanticAnalyser	m_SemanticAnalyser;
+	CCompiler			m_Compiler;
+	CInterpreter		m_Interpreter;
+	CGrammarTable *		m_pGrammarTable;
 };

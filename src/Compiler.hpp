@@ -9,8 +9,9 @@
 class CCompiler
 {
 public:
-	int CreateByteCode(SemanticTokenList_t &stl, CGrammarTable &gl, std::string &ByteCode);
+	int					CreateByteCode(SemanticTokenList_t &stl, CGrammarTable &gl, std::string &ByteCode);
 private:
-	void PostFixConverter(SemanticToken &st, CGrammarTable &gl);
-	std::stringstream m_ss;
+	void				PostFixConverter(SemanticToken &st, CGrammarTable &gl);
+private:
+	std::stringstream	m_ss;
 };
