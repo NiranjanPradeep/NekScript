@@ -58,7 +58,7 @@ int CVirtualMachine::ExecuteScript(const std::string &script)
 	}
 
 	m_Compiler.CreateByteCode(semanticTokenList, *m_pGrammarTable, byteCode);
-	// std::cout << "\nByteCode : " << byteCode;
+	std::cout << "\nByteCode : " << byteCode;
 
 	//std::cout << "\nExecuting...";
 	return m_Interpreter.Execute(byteCode, *m_pGrammarTable);

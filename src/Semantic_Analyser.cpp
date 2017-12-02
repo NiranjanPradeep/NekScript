@@ -37,6 +37,7 @@ int CSemanticAnalyser::ProcessLiteral(Token_t & t, SemanticToken & st, int & i)
 
 int CSemanticAnalyser::ProcessVariable(Token_t & t, CGrammarTable & gl, SemanticToken & st, int & i)
 {
+	return i;
 	st.Content = t.Content;
 	st.DataType = st.Type = t.Type;
 	i++;
