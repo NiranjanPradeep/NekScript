@@ -53,7 +53,7 @@ void Shreya(StackFrameController *pSfc)
 	pSfc->PushData({ new std::string(std::move(str)), StringDeleter });
 }
 
-void AddString(StackFrameController *pSfc)
+void AddString			(StackFrameController *pSfc)
 {
 	std::string sum = pSfc->GetValue<std::string>(0) + pSfc->GetValue<std::string>(1);
 	pSfc->PushData({ new std::string(std::move(sum)), StringDeleter });
@@ -61,8 +61,26 @@ void AddString(StackFrameController *pSfc)
 
 void AddNumber			(StackFrameController *pSfc)
 {
-	float sum = pSfc->GetValue<float>(0) + pSfc->GetValue<float>(1);
-	pSfc->PushData({ new float(sum), NumberDeleter });
+	float r = pSfc->GetValue<float>(0) + pSfc->GetValue<float>(1);
+	pSfc->PushData({ new float(r), NumberDeleter });
+}
+
+void SubtractNumber		(StackFrameController *pSfc)
+{
+	float r = pSfc->GetValue<float>(0) - pSfc->GetValue<float>(1);
+	pSfc->PushData({ new float(r), NumberDeleter });
+}
+
+void MultiplyNumber		(StackFrameController *pSfc)
+{
+	float r = pSfc->GetValue<float>(0) * pSfc->GetValue<float>(1);
+	pSfc->PushData({ new float(r), NumberDeleter });
+}
+
+void DivideNumber		(StackFrameController *pSfc)
+{
+	float r = pSfc->GetValue<float>(0) / pSfc->GetValue<float>(1);
+	pSfc->PushData({ new float(r), NumberDeleter });
 }
 
 // Type Casting

@@ -18,13 +18,36 @@ std::string CGrammarTable::IsCastable(const std::string & from, const std::strin
 	}
 }
 
-void CGrammarTable::Add(const std::string & Name, Function_t && func, bool TypeCaster)
+std::string CGrammarTable::HasOperator(const std::string & op1, const std::string & Operator)
+{
+	if (m_TableOperator.find({ op1, Operator }) == m_TableOperator.end()) return "";
+	else
+	{
+		//std::cout << "\nReturning function with name = " << m_TableCaster[{from, to}];
+		return m_TableOperator[{op1, Operator}];
+	}
+}
+
+void CGrammarTable::Add(const std::string & Name, Function_t && func, std::string Type)
 {
 	//std::cout << "\nAdding function with Name = " << Name;
-	if (TypeCaster)
+	if (Type == "typecast")
 	{
 		auto t = std::make_pair(func.argument_types[0], func.return_type);
 		m_TableCaster.insert(
+			std::make_pair(
+				t,
+				Name
+			)
+		);
+	}
+	if (Type.substr(0, 8) == "operator")
+	{
+		// operator +
+		// 0123456789
+		std::cout << "\nOperator =" << Type.substr(9, 1) << "#";
+		auto t = std::make_pair(func.argument_types[0], Type.substr(9, 1));
+		m_TableOperator.insert(
 			std::make_pair(
 				t,
 				Name

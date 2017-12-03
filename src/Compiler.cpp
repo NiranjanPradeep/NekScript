@@ -28,6 +28,11 @@ void CCompiler::PostFixConverter(SemanticToken & st, CGrammarTable &gl)
 		m_ss.write(reinterpret_cast<char *>(&num), sizeof(float));
 		m_ss.put('#');
 	}
+	if (st.Type == "operator")
+	{
+		std::string funcName = gl.HasOperator(st.DataType, st.Content);
+		m_ss << funcName << "#";
+	}
 	if (st.Type == "function")
 		m_ss << st.Content << "#";
 

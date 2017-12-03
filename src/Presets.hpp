@@ -12,6 +12,9 @@ void NumberDeleter		(void *&Data);
 void Print				(StackFrameController *pSfc);
 void Shreya				(StackFrameController *pSfc);
 void AddNumber			(StackFrameController *pSfc);
+void SubtractNumber		(StackFrameController *pSfc);
+void DivideNumber		(StackFrameController *pSfc);
+void MultiplyNumber		(StackFrameController *pSfc);
 void AddString			(StackFrameController *pSfc);
 
 // Implicit Functions

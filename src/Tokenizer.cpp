@@ -56,10 +56,18 @@ int CTokenizer::Tokenize(TokenList_t & tokenList)
 			wordStart = false;
 			continue;
 		}
+		if (t() == ',')
+		{
+			AddLexeme();
+			AddToken("seperator");
+			paranthesisCounter++;
+			wordStart = true;
+			continue;
+		}
 		if (t() == '(')
 		{
 			AddLexeme();
-			AddToken("syntaxer");
+			AddToken("operator");
 			paranthesisCounter++;
 			wordStart = true;
 			continue;
@@ -70,10 +78,17 @@ int CTokenizer::Tokenize(TokenList_t & tokenList)
 			{
 				paranthesisCounter--;
 				AddLexeme();
-				AddToken("syntaxer");
+				AddToken("operator");
 				wordStart = true;
 			}
 			else error = i;
+			continue;
+		}
+		if (IsOperator(t()))
+		{
+			AddLexeme();
+			AddToken("operator");
+			wordStart = true;
 			continue;
 		}
 		if (std::isspace(t()))

@@ -47,15 +47,20 @@ class CGrammarTable
 public:
 	bool				IsFunction(const std::string &s);
 	std::string			IsCastable(const std::string &from, const std::string &to);
-	void				Add(const std::string &Name, Function_t &&func, bool TypeCaster = false);
+	std::string			HasOperator(const std::string & type, const std::string & op);
+
+	void				Add(const std::string &Name, Function_t &&func, std::string Type = std::string("regular"));
 	void				Display();
-	const Function_t &	Get(const std::string &s) { if (IsFunction(s)) return m_Table[s]; }
+	const Function_t &	Get(const std::string &s) { return m_Table[s]; }
+
 private:
 
 private:
 	using Table_t		= std::unordered_map <std::string, Function_t >;
 	using CastingPair_t = std::unordered_map <std::pair<std::string, std::string >, std::string, CastHash >;
+	using Operator_t	= std::unordered_map <std::pair<std::string, std::string >, std::string, CastHash >;
 
 	Table_t			m_Table;
 	CastingPair_t	m_TableCaster;
+	Operator_t		m_TableOperator;
 };
