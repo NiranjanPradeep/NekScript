@@ -60,7 +60,6 @@ int CTokenizer::Tokenize(TokenList_t & tokenList)
 		{
 			AddLexeme();
 			AddToken("seperator");
-			paranthesisCounter++;
 			wordStart = true;
 			continue;
 		}

@@ -17,9 +17,6 @@ CGrammarTable GetBasicGrammar()
 	grammarList.Add("NumberToString", Function_t{ "string",{ "number" }, &NumberToString },			"typecast");
 	grammarList.Add("StringToNumber", Function_t{ "number",{ "string" }, &StringToNumber },			"typecast");
 
-	grammarList.Add("Shreya",		Function_t{ "string",{}, &Shreya });
-
-	std::cout << "\nTest for 1+2 : " << grammarList.HasOperator("number", "+");
 	return grammarList;
 }
 
@@ -27,6 +24,7 @@ int main()
 {
 	CGrammarTable grammarList = GetBasicGrammar();
 	grammarList.Display();
+	grammarList.Add("Shreya", Function_t{ "string",{}, &Shreya });
 
 	CVirtualMachine vm;
 	vm.AttachGrammar(&grammarList);
@@ -35,7 +33,7 @@ int main()
 
 	while (true)
 	{
-		std::cout << "\nEnter script:\n";
+		std::cout << "\n\nEnter script:\n";
 		std::getline(std::cin, script);
 		if (script.empty()) break;
 		vm.ExecuteScript(script);

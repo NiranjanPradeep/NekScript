@@ -24,11 +24,13 @@ int CSemanticAnalyser::ProcessToken(TokenList_t & tl, CGrammarTable & gl, Semant
 	//
 	//std::cout << "\n\ni = " << i;
 	//std::cout << "\ntoken = " << tl[i].Content;
-	//std::cout << "\nSemanticList : "; for (auto &t : stl) t.Display();
+	//std::cout << "\none : "; for (auto &t : stl) t.Display();
 	
 	if (tl[i].Type == "seperator")
 	{
-		st.DataType = "syntax";
+		st.DataType = "N/A";
+		st.Content = tl[i].Content;
+		st.Type = "seperator";
 		i++;
 		return error;
 	}
@@ -73,7 +75,7 @@ int CSemanticAnalyser::ProcessIdentifier(TokenList_t & tl, CGrammarTable & gl, S
 	int error = -1;
 	if (gl.IsFunction(tl[i].Content)) // function
 	{
-		error = ProcessFunction(tl, gl, st, stl, i);
+			error = ProcessFunction(tl, gl, st, stl, i);
 	}
 	else // variable
 	{
@@ -99,22 +101,18 @@ int CSemanticAnalyser::ProcessFunction(TokenList_t & tl, CGrammarTable & gl,  Se
 	if (error != -1 || para.Content != "(") { std::cout << "\nExpected ( but got " << para.Content; return i; }
 
 	auto &argTypeList = gl.Get(functionToken.Content).argument_types;
-	for (auto &argType : argTypeList)
-	{
-		SemanticToken argToken;
-		while (true)
-		{
-			error = ProcessToken(tl, gl, argToken, stl, i);
-			if (error != -1) { std::cout << "\nError in ProcessFunction() when argument was calculated. "; return error; }
-			// if (argToken.Type == "seperator") break;
-			if (OpeningBrackets == ParaCount)
-			{
-				break;
-			}
-			if (argToken.Type != "operator" || argToken.DataType != "unassigned") {
-				stl.push_back(argToken);
-			}
-		}
+	int argCount = 0;
+	//for (auto &argType : argTypeList)
+	SemanticToken argToken;
+	
+
+	bool exit = false;
+	int argumentsLeft = 0;
+
+	auto &AddArgument = [&]() {
+		argToken = stl.back();
+		stl.pop_back();
+		auto &argType = argTypeList[argumentsLeft];
 		if (argType != argToken.DataType)
 		{
 			// check if it can be converted
@@ -131,9 +129,89 @@ int CSemanticAnalyser::ProcessFunction(TokenList_t & tl, CGrammarTable & gl,  Se
 			}
 		}
 		st.ChildList.push_back(argToken);
+	};
+	int index = stl.size();
+	while  (true)
+	{
+		error = ProcessToken(tl, gl, argToken, stl, i);
+		if (error != -1) return error;
+		int n = stl.size();
+		if (argToken.Type == "seperator")
+		{
+			//std::cout << "\nGot seperator";
+			if (argumentsLeft == argTypeList.size())
+			{
+				std::cout << "\nError: extra arguments";
+				return i;
+			}
+			if (index == n - 1)
+			{
+				AddArgument();
+				argumentsLeft++;
+				continue;
+			}
+			else
+			{
+				std::cout << "\nError: extra stack";
+				return i;
+			}
+		}
+		if (
+			argToken.Type == "operator" &&
+			argToken.Content == ")"
+			)
+		{
+			//std::cout << "\nGot )";
+			if (ParaCount == OpeningBrackets)
+			{
+				// Try to end function call
+				if (index == n)
+				{
+					// all arguments were added
+					if (argumentsLeft == argTypeList.size())
+					{
+						break;
+					}
+					else
+					{
+						std::cout << "\nError: function requires more arguments.";
+						return i;
+					}
+				}
+				if (index > n)
+				{
+					// popped too many
+					std::cout << "\nError: strange error.";
+					return i;
+				}
+				if (index+1 == n)
+				{
+					// there exists an argument
+					if (argumentsLeft == argTypeList.size())
+					{
+						std::cout << "\nError: too many arguments.";
+						return i;
+					}
+					else
+					{
+						AddArgument();
+						//std::cout << "\nGot argument.";
+						argumentsLeft++;
+						if (argumentsLeft == argTypeList.size()) break;
+						continue;
+					}
+				}
+				std::cout << "\nError: extra stack";
+				return i;
+			}
+		}
+		if (argToken.Type != "operator")
+		{
+			stl.push_back(argToken);
+			continue;
+		}
 	}
 
-	//std::cout << "\nFunction done!!!!";
 	return error;
 }
 
@@ -157,20 +235,10 @@ int CSemanticAnalyser::ProcessOperator(TokenList_t & tl, CGrammarTable &gl, Sema
 			OperatorStack.pop_back();
 			i++;
 			OpeningBrackets--;
-			if (stl.empty())
-			{
-				st.Type = "void";
-				st.Content = "";
-				st.DataType = "void";
-				return -1;
-			}
-			st = stl.back();
-			stl.pop_back();
 			return -1;
 		}
 	}
-	// 1 2
-	// +
+
 	char op = st.Content.back();
 	if (Precedence(op) > Precedence(OperatorStack.back()))
 	{

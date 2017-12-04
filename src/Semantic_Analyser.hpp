@@ -39,6 +39,7 @@ public:
 			error = ProcessToken(tl, gl, st, stl, i);
 			if (error != -1) { std::cout << "\nError in DoGrammar() "; return error; }
 			if (st.Type == "operator" && st.DataType == "unassigned") continue;
+			if (st.Type == "seperator") continue;
 			stl.push_back(st);
 		}
 		return error;
