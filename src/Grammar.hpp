@@ -50,6 +50,7 @@ public:
 	std::string			HasOperator(const std::string & type, const std::string & op);
 
 	void				Add(const std::string &Name, Function_t &&func, std::string Type = std::string("regular"));
+	void				Add(const std::string &Name, const std::string &Definer, const std::string &Deleter);
 	void				Display();
 	const Function_t &	Get(const std::string &s) { return m_Table[s]; }
 

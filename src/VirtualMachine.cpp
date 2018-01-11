@@ -20,7 +20,7 @@ int CVirtualMachine::ExecuteScript(const std::string &script)
 	int error = m_Tokenizer.Tokenize(tokenList);
 	if (error != -1)
 	{
-		std::cout << "\nError while parsing. i = " << error << ", " << std::string(script.begin() + error, script.end());
+		std::cerr << "\nError while parsing. i = " << error << ", " << std::string(script.begin() + error, script.end());
 		return error;
 	}
 	else
@@ -33,12 +33,13 @@ int CVirtualMachine::ExecuteScript(const std::string &script)
 			t.Display();
 		}
 		*/
+		
 	}
 
 	error = m_SemanticAnalyser.Analyze(tokenList, *m_pGrammarTable, semanticTokenList);
 	if (error != -1)
 	{ 
-		std::cout << "\nError: Semantic error, i = " << error << std::string(
+		std::cerr << "\nError: Semantic error, i = " << error << std::string(
 				(error>=static_cast<int>(tokenList.size())) ? 
 				(". Got unexpected end of file") : 
 				(". Error at " + tokenList[error].Content)

@@ -12,10 +12,15 @@ struct SemanticToken : public Token_t
 	std::string TypecastTo;
 	void Display()
 	{
+		static int i = 0;
 		//Token_t::Display();
 		//std::cout << "\nDataType = " << DataType << std::endl;
-		std::cout << "\nContent = " << Content;
+		std::cout << "\n";
+		for (int j = 0; j < i; j++) std::cout.put(i);
+		std::cout << "Content = " << Content;
+		i += 4;
 		for (auto &t : ChildList) t.Display();
+		i -= 4;
 	}
 };
 
@@ -37,7 +42,7 @@ public:
 			SemanticToken st;
 			// std::cout << "\nCurrent token = " << tl[i].Content;
 			error = ProcessToken(tl, gl, st, stl, i);
-			if (error != -1) { std::cout << "\nError in DoGrammar() "; return error; }
+			if (error != -1) { std::cerr << "\nError in DoGrammar() "; return error; }
 			if (st.Type == "operator" && st.DataType == "unassigned") continue;
 			if (st.Type == "seperator") continue;
 			stl.push_back(st);

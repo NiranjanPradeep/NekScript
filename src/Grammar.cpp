@@ -57,6 +57,11 @@ void CGrammarTable::Add(const std::string & Name, Function_t && func, std::strin
 	m_Table.insert(std::make_pair(Name, std::move(func)));
 }
 
+void CGrammarTable::Add(const std::string & Name, const std::string & Definer, const std::string & Deleter)
+{
+
+}
+
 void CGrammarTable::Display()
 {
 	std::cout << "\nFunctions registered: ";

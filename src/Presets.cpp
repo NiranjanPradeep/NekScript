@@ -55,8 +55,9 @@ void Shreya(StackFrameController *pSfc)
 
 void AddString			(StackFrameController *pSfc)
 {
-	std::string sum = pSfc->GetValue<std::string>(0) + pSfc->GetValue<std::string>(1);
-	pSfc->PushData({ new std::string(std::move(sum)), StringDeleter });
+	std::string sum = pSfc->GetValue<std::string>(0);
+	std::string sum2 =pSfc->GetValue<std::string>(1);
+	pSfc->PushData({ new std::string(std::move(sum+sum2)), StringDeleter });
 }
 
 void AddNumber			(StackFrameController *pSfc)

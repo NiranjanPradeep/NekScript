@@ -18,23 +18,27 @@ void CCompiler::PostFixConverter(SemanticToken & st, CGrammarTable &gl)
 	for (auto &t : st.ChildList)
 		PostFixConverter(t, gl);
 
-	if (st.Type == "string")
+	if (st.Type == "function")
+	{
+		m_ss << st.Content << "#";
+	}
+	else if (st.Type == "string")
 		m_ss << "_GetString#" << st.Content << "#";
-	if (st.Type == "number")
+	else if (st.Type == "number")
 	{
 		float num = std::stof(st.Content);
-		
+	
+		std::cout << "\nPutting _GetNumber because of " << st.Content;
 		m_ss << "_GetNumber#";
 		m_ss.write(reinterpret_cast<char *>(&num), sizeof(float));
 		m_ss.put('#');
 	}
-	if (st.Type == "operator")
+	else if (st.Type == "operator")
 	{
 		std::string funcName = gl.HasOperator(st.DataType, st.Content);
 		m_ss << funcName << "#";
 	}
-	if (st.Type == "function")
-		m_ss << st.Content << "#";
+	
 
 	if (st.TypecastTo.empty() == false)
 	{

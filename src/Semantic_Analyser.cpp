@@ -19,13 +19,15 @@ int					Precedence(char ch)
 int CSemanticAnalyser::ProcessToken(TokenList_t & tl, CGrammarTable & gl, SemanticToken & st, SemanticTokenList_t &stl, int & i)
 {
 	int error = -1;
-	
-	if (i >= static_cast<int>(tl.size())) { std::cout << "\nNo tokens available."; return i; }
-	//
-	//std::cout << "\n\ni = " << i;
-	//std::cout << "\ntoken = " << tl[i].Content;
-	//std::cout << "\none : "; for (auto &t : stl) t.Display();
-	
+	st = {};
+
+	if (i >= static_cast<int>(tl.size())) { std::cerr << "\nNo tokens available."; return i; }
+	/*
+	std::cout << "\n\ni = " << i;
+	std::cout << "\ntoken = " << tl[i].Content;
+	std::cout << "\none : "; for (auto &t : stl) t.Display();
+	*/
+
 	if (tl[i].Type == "seperator")
 	{
 		st.DataType = "N/A";
@@ -81,7 +83,7 @@ int CSemanticAnalyser::ProcessIdentifier(TokenList_t & tl, CGrammarTable & gl, S
 	{
 		error = ProcessVariable(tl[i], gl, st, i);
 	}
-	if (error != -1) { std::cout << "\nError in ProcessIdentifier() "; return error; }
+	if (error != -1) { std::cerr << "\nError : in ProcessIdentifier() "; return error; }
 	return error;
 }
 
@@ -98,37 +100,36 @@ int CSemanticAnalyser::ProcessFunction(TokenList_t & tl, CGrammarTable & gl,  Se
 	i++;
 	int ParaCount = OpeningBrackets;
 	error = ProcessToken(tl, gl, para, stl, i);
-	if (error != -1 || para.Content != "(") { std::cout << "\nExpected ( but got " << para.Content; return i; }
+	if (error != -1 || para.Content != "(") { std::cerr << "\nError : expected ( but got " << para.Content; return i; }
 
 	auto &argTypeList = gl.Get(functionToken.Content).argument_types;
 	int argCount = 0;
 	//for (auto &argType : argTypeList)
 	SemanticToken argToken;
-	
 
 	bool exit = false;
 	int argumentsLeft = 0;
 
 	auto &AddArgument = [&]() {
-		argToken = stl.back();
+		SemanticToken lastToken = stl.back();
 		stl.pop_back();
 		auto &argType = argTypeList[argumentsLeft];
-		if (argType != argToken.DataType)
+		if (argType != lastToken.DataType)
 		{
 			// check if it can be converted
-			if (gl.IsCastable(argToken.DataType, argType) != "")
+			if (gl.IsCastable(lastToken.DataType, argType) != "")
 			{
 				//std::cout << "\nImplicit typecast from " << argToken.DataType << " to " << argType;
-				argToken.TypecastTo = argType;
+				lastToken.TypecastTo = argType;
 			}
 			else
 			{
-				std::cout << "\nFunction expected argument of type " << argType << ", but got " << argToken.Content << " of type " << argToken.DataType;
+				std::cerr << "\nError : function expected argument of type " << argType << ", but got " << lastToken.Content << " of type " << lastToken.DataType;
 				error = i;
 				return error;
 			}
 		}
-		st.ChildList.push_back(argToken);
+		st.ChildList.push_back(lastToken);
 	};
 	int index = stl.size();
 	while  (true)
@@ -141,7 +142,7 @@ int CSemanticAnalyser::ProcessFunction(TokenList_t & tl, CGrammarTable & gl,  Se
 			//std::cout << "\nGot seperator";
 			if (argumentsLeft == argTypeList.size())
 			{
-				std::cout << "\nError: extra arguments";
+				std::cerr << "\nError: extra arguments";
 				return i;
 			}
 			if (index == n - 1)
@@ -152,7 +153,7 @@ int CSemanticAnalyser::ProcessFunction(TokenList_t & tl, CGrammarTable & gl,  Se
 			}
 			else
 			{
-				std::cout << "\nError: extra stack";
+				std::cerr << "\nError: extra stack";
 				return i;
 			}
 		}
@@ -174,14 +175,14 @@ int CSemanticAnalyser::ProcessFunction(TokenList_t & tl, CGrammarTable & gl,  Se
 					}
 					else
 					{
-						std::cout << "\nError: function requires more arguments.";
+						std::cerr << "\nError: function requires more arguments.";
 						return i;
 					}
 				}
 				if (index > n)
 				{
 					// popped too many
-					std::cout << "\nError: strange error.";
+					std::cerr << "\nError: strange error.";
 					return i;
 				}
 				if (index+1 == n)
@@ -189,7 +190,7 @@ int CSemanticAnalyser::ProcessFunction(TokenList_t & tl, CGrammarTable & gl,  Se
 					// there exists an argument
 					if (argumentsLeft == argTypeList.size())
 					{
-						std::cout << "\nError: too many arguments.";
+						std::cerr << "\nError: too many arguments.";
 						return i;
 					}
 					else
@@ -201,7 +202,7 @@ int CSemanticAnalyser::ProcessFunction(TokenList_t & tl, CGrammarTable & gl,  Se
 						continue;
 					}
 				}
-				std::cout << "\nError: extra stack";
+				std::cerr << "\nError: extra stack";
 				return i;
 			}
 		}
@@ -250,14 +251,14 @@ int CSemanticAnalyser::ProcessOperator(TokenList_t & tl, CGrammarTable &gl, Sema
 	{
 		char opSt = OperatorStack.back();
 		OperatorStack.pop_back();
-		if (stl.size() < 2) { std::cout << "\nError: operator " << opSt << " requires 2 operands"; return i; }
+		if (stl.size() < 2) { std::cerr << "\nError: operator " << opSt << " requires 2 operands"; return i; }
 		SemanticToken operand1 = stl[stl.size() - 2];
 		SemanticToken operand2 = stl[stl.size() - 1];
 		
 		std::string DataType = gl.HasOperator(operand1.DataType, std::string(1, opSt));
 		if (DataType == "")
 		{
-			std::cout << "\nError: operator " << std::string(1, opSt) << " undefined for " << operand1.DataType;
+			std::cerr << "\nError: operator " << std::string(1, opSt) << " undefined for " << operand1.DataType;
 			return i;
 		}
 		if (operand2.DataType != operand1.DataType) operand2.TypecastTo = operand1.DataType;
